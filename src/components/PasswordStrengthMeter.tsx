@@ -1,15 +1,13 @@
 import { useMemo, useState } from 'react';
-import { calculatePasswordStrength } from '../utils/passwordStrength';
+import {
+  PASSWORD_RULE_MESSAGES,
+  calculatePasswordStrength,
+  type PasswordStrengthLabel,
+} from '../utils/passwordStrength';
 
-const RULE_MESSAGES: Record<string, string> = {
-  'minimum-length': 'Use at least 8 characters',
-  lowercase: 'Add a lowercase letter',
-  uppercase: 'Add an uppercase letter',
-  number: 'Add a number',
-  'special-character': 'Add a special character',
-};
+type StrengthTone = 'empty' | 'weak' | 'medium' | 'good' | 'strong';
 
-const STRENGTH_TONE: Record<string, string> = {
+const STRENGTH_TONES: Record<PasswordStrengthLabel, StrengthTone> = {
   Empty: 'empty',
   Weak: 'weak',
   Medium: 'medium',
@@ -19,10 +17,12 @@ const STRENGTH_TONE: Record<string, string> = {
 
 export function PasswordStrengthMeter() {
   const [password, setPassword] = useState('');
-  const strength = useMemo(
+  const passwordStrength = useMemo(
     () => calculatePasswordStrength(password),
     [password],
   );
+  const strengthTone = STRENGTH_TONES[passwordStrength.label];
+  const progressText = `${passwordStrength.label}: ${passwordStrength.percentage}%`;
 
   return (
     <form className="password-meter" aria-label="Password strength meter">
@@ -39,22 +39,22 @@ export function PasswordStrengthMeter() {
         aria-label="Password strength"
         aria-valuemax={100}
         aria-valuemin={0}
-        aria-valuenow={strength.percentage}
-        aria-valuetext={`${strength.label}: ${strength.percentage}%`}
+        aria-valuenow={passwordStrength.percentage}
+        aria-valuetext={progressText}
         className="password-meter__progress"
-        data-strength={STRENGTH_TONE[strength.label]}
+        data-strength={strengthTone}
         role="progressbar"
       >
         <span
           className="password-meter__progress-fill"
-          style={{ width: `${strength.percentage}%` }}
+          style={{ width: `${passwordStrength.percentage}%` }}
         />
       </div>
-      <p role="status">{strength.label}</p>
-      {strength.missingRules.length > 0 ? (
+      <p role="status">{passwordStrength.label}</p>
+      {passwordStrength.missingRules.length > 0 ? (
         <ul aria-label="Missing password rules">
-          {strength.missingRules.map((rule) => (
-            <li key={rule}>{RULE_MESSAGES[rule]}</li>
+          {passwordStrength.missingRules.map((rule) => (
+            <li key={rule}>{PASSWORD_RULE_MESSAGES[rule]}</li>
           ))}
         </ul>
       ) : null}
