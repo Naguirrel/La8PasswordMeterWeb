@@ -1,30 +1,81 @@
 export type PasswordStrength = {
   score: number;
+  maxScore: number;
+  percentage: number;
   label: string;
+  missingRules: string[];
 };
 
-export function getPasswordStrength(password: string): PasswordStrength {
-  const checks = [
-    password.length >= 8,
-    /[a-z]/.test(password),
-    /[A-Z]/.test(password),
-    /\d/.test(password),
-    /[^A-Za-z0-9]/.test(password),
-  ];
+const MAX_SCORE = 5;
 
-  const score = checks.filter(Boolean).length;
+const RULES = [
+  {
+    id: 'minimum-length',
+    test: (password: string) => password.length >= 8,
+  },
+  {
+    id: 'lowercase',
+    test: (password: string) => /[a-z]/.test(password),
+  },
+  {
+    id: 'uppercase',
+    test: (password: string) => /[A-Z]/.test(password),
+  },
+  {
+    id: 'number',
+    test: (password: string) => /\d/.test(password),
+  },
+  {
+    id: 'special-character',
+    test: (password: string) => /[^A-Za-z0-9]/.test(password),
+  },
+];
 
-  if (!password) {
-    return { score: 0, label: 'Sin password' };
+function getLabel(score: number): string {
+  if (score === 0) {
+    return 'Empty';
   }
 
   if (score <= 2) {
-    return { score, label: 'Debil' };
+    return 'Weak';
   }
 
-  if (score <= 4) {
-    return { score, label: 'Buena' };
+  if (score === 3) {
+    return 'Medium';
   }
 
-  return { score: 4, label: 'Fuerte' };
+  if (score === 4) {
+    return 'Good';
+  }
+
+  return 'Strong';
 }
+
+export function calculatePasswordStrength(password: string): PasswordStrength {
+  const normalizedPassword = password.trim();
+
+  if (!normalizedPassword) {
+    return {
+      score: 0,
+      maxScore: MAX_SCORE,
+      percentage: 0,
+      label: 'Empty',
+      missingRules: RULES.map((rule) => rule.id),
+    };
+  }
+
+  const missingRules = RULES.filter((rule) => !rule.test(normalizedPassword)).map(
+    (rule) => rule.id,
+  );
+  const score = MAX_SCORE - missingRules.length;
+
+  return {
+    score,
+    maxScore: MAX_SCORE,
+    percentage: (score / MAX_SCORE) * 100,
+    label: getLabel(score),
+    missingRules,
+  };
+}
+
+export const getPasswordStrength = calculatePasswordStrength;
