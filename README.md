@@ -1,4 +1,4 @@
-# La8 Password Meter Web
+# Lab #8 Password Meter Web
 
 Aplicación React con Vite y TypeScript para medir la fortaleza de un password en tiempo real. El proyecto separa la lógica pura de cálculo del componente visual y usa pruebas automatizadas con Vitest y React Testing Library.
 
