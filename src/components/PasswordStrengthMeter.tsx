@@ -9,8 +9,12 @@ const RULE_MESSAGES: Record<string, string> = {
   'special-character': 'Add a special character',
 };
 
-type ProgressStyle = React.CSSProperties & {
-  '--progress': string;
+const STRENGTH_TONE: Record<string, string> = {
+  Empty: 'empty',
+  Weak: 'weak',
+  Medium: 'medium',
+  Good: 'good',
+  Strong: 'strong',
 };
 
 export function PasswordStrengthMeter() {
@@ -36,10 +40,16 @@ export function PasswordStrengthMeter() {
         aria-valuemax={100}
         aria-valuemin={0}
         aria-valuenow={strength.percentage}
+        aria-valuetext={`${strength.label}: ${strength.percentage}%`}
         className="password-meter__progress"
+        data-strength={STRENGTH_TONE[strength.label]}
         role="progressbar"
-        style={{ '--progress': `${strength.percentage}%` } as ProgressStyle}
-      />
+      >
+        <span
+          className="password-meter__progress-fill"
+          style={{ width: `${strength.percentage}%` }}
+        />
+      </div>
       <p role="status">{strength.label}</p>
       {strength.missingRules.length > 0 ? (
         <ul aria-label="Missing password rules">
