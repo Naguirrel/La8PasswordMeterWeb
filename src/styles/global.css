@@ -75,6 +75,16 @@ h1 {
   width: 100%;
 }
 
+.password-meter__progress {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, #3a67b1 var(--progress, 0%), transparent 0),
+    #d9e2ef;
+}
+
 .password-meter p {
   margin: 0;
   font-weight: 700;

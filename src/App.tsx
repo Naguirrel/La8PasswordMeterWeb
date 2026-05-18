@@ -1,4 +1,4 @@
-import { PasswordMeter } from './components/PasswordMeter';
+import { PasswordStrengthMeter } from './components/PasswordStrengthMeter';
 
 export function App() {
   return (
@@ -6,7 +6,7 @@ export function App() {
       <section className="hero">
         <p className="eyebrow">La8 Password Meter</p>
         <h1>Mide la fuerza de tu password en segundos.</h1>
-        <PasswordMeter />
+        <PasswordStrengthMeter />
       </section>
     </main>
   );
